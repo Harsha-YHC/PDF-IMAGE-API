@@ -38,7 +38,7 @@ from io import BytesIO
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, File, Query, UploadFile, HTTPException
+from fastapi import FastAPI, File, Query, UploadFile, HTTPException, Form
 from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.responses import RedirectResponse
 
