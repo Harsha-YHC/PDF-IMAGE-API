@@ -40,6 +40,7 @@ from typing import Optional
 
 from fastapi import FastAPI, File, Query, UploadFile, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
+from fastapi.responses import RedirectResponse
 
 import fitz
 from PIL import Image
@@ -832,6 +833,73 @@ function downloadSelected() {{
 </html>"""
 
     return HTMLResponse(content=html)
+
+# --Automatically redirected to extracted images page--
+@app.get("/", response_class=HTMLResponse)
+def home():
+
+    return """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>PDF Image Extractor</title>
+    </head>
+
+    <body>
+
+        <h1>PDF Image Extractor</h1>
+
+        <form
+            action="/upload-and-view"
+            method="post"
+            enctype="multipart/form-data"
+        >
+
+            <input
+                type="file"
+                name="file"
+                accept=".pdf"
+                required
+            >
+
+            <br><br>
+
+            <button type="submit">
+                Upload PDF
+            </button>
+
+        </form>
+
+    </body>
+    </html>
+    """
+
+
+@app.post("/upload-and-view",)
+
+async def upload_and_view(
+    file: UploadFile = File(..., description="PDF file to process"),
+    # detect_dupes: bool = False,
+):
+    pdf_bytes = await file.read()
+
+    images, records = process_pdf(
+        pdf_bytes,
+        file.filename
+    )
+
+    job_id = uuid.uuid4().hex[:12]
+
+    JOB_STORE[job_id] = {
+        "images": images,
+        "records": records,
+        "filename": file.filename
+    }
+
+    return RedirectResponse(
+    url=f"/view/{job_id}",
+    status_code=303
+)
 
 
 # ── GET /download/{job_id}/selected.zip ──────────────────────────────────────
