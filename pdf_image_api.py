@@ -569,8 +569,9 @@ app = FastAPI(
     title="PDF Image Extraction API",
     description="Upload a PDF file to extract and view all images.",
     version="4.0.0",
-    #docs_url="/docs", # Disable default docs route so we can override it
-    #redoc_url=None,
+    docs_url=None, # Disable default docs route so we can override it
+    redoc_url=None,
+    openapi_url=None,
 )
 
 
@@ -875,31 +876,34 @@ def home():
     """
 
 
-@app.post("/upload-and-view",)
 
+@app.post("/upload-and-view")
 async def upload_and_view(
-    file: UploadFile = File(..., description="PDF file to process"),
-    # detect_dupes: bool = False,
+    file: UploadFile = File(...)
 ):
+
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(
+            status_code=400,
+            detail="Only PDF files are accepted."
+        )
+
     pdf_bytes = await file.read()
 
-    images, records = process_pdf(
+    job = run_pipeline(
         pdf_bytes,
-        file.filename
+        file.filename,
+        False
     )
 
     job_id = uuid.uuid4().hex[:12]
 
-    JOB_STORE[job_id] = {
-        "images": images,
-        "records": records,
-        "filename": file.filename
-    }
+    JOB_STORE[job_id] = job
 
     return RedirectResponse(
-    url=f"/view/{job_id}",
-    status_code=303
-)
+        url=f"/view/{job_id}",
+        status_code=303
+    )
 
 
 # ── GET /download/{job_id}/selected.zip ──────────────────────────────────────
