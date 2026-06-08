@@ -879,7 +879,7 @@ def home():
             <button type="submit">
                 Upload PDF
             </button>
-            
+
         </form>
 
     </body>
@@ -890,7 +890,8 @@ def home():
 
 @app.post("/upload-and-view")
 async def upload_and_view(
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    detect_dupes: bool = Form(False)
 ):
 
     if not file.filename.lower().endswith(".pdf"):
@@ -904,7 +905,7 @@ async def upload_and_view(
     job = run_pipeline(
         pdf_bytes,
         file.filename,
-        False
+        detect_dupes
     )
 
     job_id = uuid.uuid4().hex[:12]
