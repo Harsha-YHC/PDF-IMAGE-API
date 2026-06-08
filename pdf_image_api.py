@@ -865,10 +865,21 @@ def home():
 
             <br><br>
 
+            <label>
+                <input
+                    type="checkbox"
+                    name="detect_dupes"
+                    checked
+                >
+                Detect Duplicate Images
+            </label>
+
+            <br><br>
+
             <button type="submit">
                 Upload PDF
             </button>
-
+            
         </form>
 
     </body>
