@@ -1,31 +1,5 @@
 """
-pdf_image_api.py  v5.0
-======================
 FastAPI REST API — PDF image extraction, classification, duplicate detection.
-
-What's new in v5.0
-------------------
-- Home page (/) is a clean upload form — no Swagger needed
-- After upload → automatically redirected to image viewer page
-- Viewer page shows extracted images in a grid with:
-    • Download All Images (ZIP)
-    • Download Selected Images (ZIP)
-    • Download Metadata (CSV)
-    • Duplicate groups section
-- Graphs/maps with text are now correctly kept:
-    Hybrid filter now uses a TWO-STAGE decision:
-      Stage 1 — structural analysis (contour complexity, edge density)
-        High complexity = figure (chart/map/diagram) → KEEP immediately
-      Stage 2 — only if Stage 1 is uncertain → OCR check
-    This prevents rejecting complex figures just because they contain text labels
-
-Setup
------
-1. D:\\Anaconda\\Scripts\\activate.bat D:\\Anaconda
-2. conda activate pdf_api
-3. cd <folder containing this file>
-4. uvicorn pdf_image_api:app --reload --port 8000
-5. Open http://127.0.0.1:8000 in your browser
 """
 
 from __future__ import annotations
